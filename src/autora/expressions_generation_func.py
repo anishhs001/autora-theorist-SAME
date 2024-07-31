@@ -42,7 +42,12 @@ class ExpressionGenerator:
             for left in left_parts:
                 for right in right_parts:
                     for op in self.binary_operators:
-                        expressions.append(f"({left}) {op} ({right})")
+                        if op == '/':
+                            # Avoid division by zero
+                            expression = f"({left}) {op} ({right})"
+                            expressions.append(f"{expression} if ({right}) != 0 else 1")
+                        else:
+                            expressions.append(f"({left}) {op} ({right})")
         return expressions
 
     def generate_all_expressions(self):
@@ -56,3 +61,17 @@ class ExpressionGenerator:
 
         # Remove duplicates and unnecessary parentheses (if any)
         return list(all_expressions)
+    
+    def dataframe_from_expr(self, df):
+        """ Generates all the new columns with the expressions mentioned in the dataframe"""
+        expressions = self.generate_all_expressions()
+        evaluated_columns = {}
+        
+        for expr in expressions:
+            try:
+                # Use apply with a lambda function to evaluate each expression
+                evaluated_columns[expr] = df.apply(lambda row: eval(expr, {'np': np}, row.to_dict()), axis=1)
+            except Exception as e:
+                print(f"Could not evaluate expression {expr}: {e}")
+        
+        return evaluated_columns
