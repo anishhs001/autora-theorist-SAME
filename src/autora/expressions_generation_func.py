@@ -62,9 +62,21 @@ class ExpressionGenerator:
         # Remove duplicates and unnecessary parentheses (if any)
         return list(all_expressions)
     
+    def generate_all_required_expressions(self):
+        """Filter expressions to ensure all columns are used."""
+        all_expressions = self.generate_all_expressions()
+        filtered_expressions = []
+
+        for expr in all_expressions:
+            # Check if all column names are in the expression
+            if all(col in expr for col in self.columns):
+                filtered_expressions.append(expr)
+        
+        return filtered_expressions
+    
     def dataframe_from_expr(self, df):
         """ Generates all the new columns with the expressions mentioned in the dataframe"""
-        expressions = self.generate_all_expressions()
+        expressions = self.generate_all_required_expressions()
         evaluated_columns = {}
         
         for expr in expressions:
@@ -73,5 +85,4 @@ class ExpressionGenerator:
                 evaluated_columns[expr] = df.apply(lambda row: eval(expr, {'np': np}, row.to_dict()), axis=1)
             except Exception as e:
                 print(f"Could not evaluate expression {expr}: {e}")
-        
         return evaluated_columns

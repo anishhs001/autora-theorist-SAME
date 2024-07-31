@@ -14,7 +14,6 @@ dependencies = [
     "autora-core",
     "scikit-learn",
     "autora",
-    "requests",
 ]
 
 [project.optional-dependencies]
