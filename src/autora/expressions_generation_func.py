@@ -65,13 +65,13 @@ class ExpressionGenerator:
     def dataframe_from_expr(self, df):
         """ Generates all the new columns with the expressions mentioned in the dataframe"""
         expressions = self.generate_all_expressions()
-        evaluated_cols = {}
+        evaluated_columns = {}
         
         for expr in expressions:
             try:
                 # Use apply with a lambda function to evaluate each expression
-                evaluated_cols[expr] = df.apply(lambda row: eval(expr, {'np': np}, row.to_dict()), axis=1)
+                evaluated_columns[expr] = df.apply(lambda row: eval(expr, {'np': np}, row.to_dict()), axis=1)
             except Exception as e:
                 print(f"Could not evaluate expression {expr}: {e}")
         
-        return evaluated_cols
+        return evaluated_columns
