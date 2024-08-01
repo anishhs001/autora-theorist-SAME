@@ -85,6 +85,8 @@ class ExpressionGenerator:
     def dataframe_from_expr(self, df):
         """Generates all the new columns with the expressions mentioned in the dataframe"""
         expressions = self.generate_all_required_expressions()
+        if len(expressions) > 10**5:
+            expressions = random.sample(expressions, 10**5)
         evaluated_columns = {}
         
         for expr in expressions:
