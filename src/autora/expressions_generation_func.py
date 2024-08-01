@@ -26,13 +26,22 @@ class ExpressionGenerator:
         # Initialize columns
         self.columns = columns
 
+    def generate_unary_expressions(self, item):
+        """Generate unary expressions for a single item."""
+        unary_expressions = [item]
+        for op in self.unary_operators:
+            expression = op(item)
+            # Ensure no invalid operations (e.g., log of non-positive values)
+            if 'np.log' in expression:
+                unary_expressions.append(expression + f" if {item} > 0 else 0")
+            else:
+                unary_expressions.append(expression)
+        return unary_expressions
+
     def generate_expressions(self, items):
         """Generate all possible expressions using binary and unary operators."""
         if len(items) == 1:
-            single_expressions = items.copy()
-            for op in self.unary_operators:
-                for item in items:
-                    single_expressions.append(op(item))
+            single_expressions = self.generate_unary_expressions(items[0])
             return single_expressions
         
         expressions = []
@@ -59,7 +68,6 @@ class ExpressionGenerator:
             for combination in combinations:
                 all_expressions.update(self.generate_expressions(list(combination)))
 
-        # Remove duplicates and unnecessary parentheses (if any)
         return list(all_expressions)
     
     def generate_all_required_expressions(self):
@@ -75,7 +83,7 @@ class ExpressionGenerator:
         return filtered_expressions
     
     def dataframe_from_expr(self, df):
-        """ Generates all the new columns with the expressions mentioned in the dataframe"""
+        """Generates all the new columns with the expressions mentioned in the dataframe"""
         expressions = self.generate_all_required_expressions()
         evaluated_columns = {}
         
@@ -85,4 +93,4 @@ class ExpressionGenerator:
                 evaluated_columns[expr] = df.apply(lambda row: eval(expr, {'np': np}, row.to_dict()), axis=1)
             except Exception as e:
                 print(f"Could not evaluate expression {expr}: {e}")
-        return evaluated_columns
+        return pd.DataFrame(evaluated_columns)
