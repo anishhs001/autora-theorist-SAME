@@ -28,13 +28,20 @@ class SAMERegressor(BaseEstimator):
       k = len(model.coef_) + (1 if model.fit_intercept else 0)  # Number of coefficients plus 1 for the intercept if present
       # Compute the AIC
       aic = n * np.log(rss / n) + 2 * k
+      aic = aic.values[0]
+      # Return the AIC
       return aic
 
 
     def fit(self, x, y):
+      self.initial_cols = x.columns
       exp_check = ExpressionChecker(x,y)
       x = exp_check.output()
+      self.expr = x.columns.tolist()[0]
       self.x = x
+      x = x.values.reshape(-1, 1)
+      if len(x)>=75 and len(y)>=75:
+        y = y.sample(n = 75, random_state = 42)
       self.linear_with_constant.fit(x, y)
       self.linear_without_constant.fit(x, y)
       aic_1 = self.calculate_aic(self.linear_with_constant, x, y)
@@ -46,16 +53,21 @@ class SAMERegressor(BaseEstimator):
       return self
 
     def predict(self, x):
-      return self.model.predict(x)
+      x_df = pd.DataFrame(x, columns=self.initial_cols)
+      x_df = x_df.apply(lambda row: eval(self.expr, {'np': np}, row.to_dict()), axis=1)
+      return self.model.predict(x_df.values.reshape(-1, 1))
 
     def print_eqn(self):
         # Extract the coefficients and intercept
         coeffs = self.model.coef_ 
-        feature_names = self.x.columns()
+        feature_names = self.x.columns
         if self.model.fit_intercept:
           intercept = self.model.intercept_
-          equation = f"y = {intercept:.3f}"
-          equation += f" + ({coeffs:.3f}) * {feature_names}"
+          equation = f"y = {intercept[0]:.3f}"
+          for coeff, feature in zip(coeffs, feature_names):
+              equation += f" + ({coeff[0]:.3f}) * {feature}"
         else:
-           equation += f" + ({coeffs:.3f}) * {feature_names}"
+          equation = ""
+          for coeff, feature in zip(coeffs, feature_names):
+            equation += f" + ({coeff[0]:.3f}) * {feature}"
         print(equation)
