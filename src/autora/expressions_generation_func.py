@@ -1,6 +1,9 @@
 import pandas as pd
 import itertools
 import numpy as np
+import random
+
+random.seed(42)
 
 class ExpressionGenerator:
     '''
