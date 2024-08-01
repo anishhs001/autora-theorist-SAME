@@ -1,9 +1,8 @@
 import pandas as pd
 import itertools
 import numpy as np
-import random
 
-random.seed(42)
+np.random.seed(42)
 
 class ExpressionGenerator:
     '''
@@ -89,7 +88,7 @@ class ExpressionGenerator:
         """Generates all the new columns with the expressions mentioned in the dataframe"""
         expressions = self.generate_all_required_expressions()
         if len(expressions) > 10**5:
-            expressions = random.sample(expressions, 10**5)
+            expressions = np.random.choice(expressions, size=10**5, replace=False)
         evaluated_columns = {}
         
         for expr in expressions:
