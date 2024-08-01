@@ -20,8 +20,6 @@ class ExpressionGenerator:
             lambda x: f"np.exp({x})",
             lambda x: f"np.power({x}, 2)",
             lambda x: f"np.power({x}, 3)",
-            lambda x: f"np.power({x}, 4)",
-            lambda x: f"np.power({x}, 5)",
             lambda x: f"np.log({x})"
         ]
         
