@@ -1,4 +1,4 @@
-from expressions_generation_func import ExpressionGenerator
+from autora.expressions_generation_func import ExpressionGenerator
 import pandas as pd
 import numpy as np
 
