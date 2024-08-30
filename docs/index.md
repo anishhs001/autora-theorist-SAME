@@ -1,24 +1,7 @@
 # autora-theorist-SAME
 
-Explain what your contribution is doing here
+Make use of the 'brute force' approach to create all possible combinations of equations and calculates their values from the input variables. They then use the correlation value wrt y to pick the best equation and uses it subsequently.
 
-You can include inline mathematics by wrapping LaTeX formatted math in `$` symbols: `$(3 < 4)$` will render as:  $(3 < 4)$
-
-To include block mathematics wrap the expression with double `$$`:
-
-```
-$$
-E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
-$$
-```
-
-Will render as:
-
-$$
-E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
-$$
-
-
-See more information on writing mathematical expressions [here](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions). 
+###### Challenge related side note (To possibly get the best scoring metric value, the theorist would need to include constant values and use a different metric instead of Pearson's coefficient to calculate correlation such as MSE and try getting an equation without going through all possible combinations (It wouldn't really be brute force approach then))
 
 
