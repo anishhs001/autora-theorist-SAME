@@ -13,5 +13,5 @@ pip install -U autora["theorist-autora-theorist-same"]
 
 Check your installation by running:
 ```shell
-python -c "from autora.theorist.autora_theorist_same import Example"
+python -c "from autora.theorist.autora_theorist_same import SAMERegressor"
 ```
