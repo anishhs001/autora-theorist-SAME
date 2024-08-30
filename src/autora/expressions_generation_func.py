@@ -10,6 +10,15 @@ class ExpressionGenerator:
     unary_operators: list of unary operators to use
     '''
     def __init__(self, columns, max_expressions=10**5):
+        """
+        Initializes the ExpressionGenerator with a set of columns and a limit on the 
+        number of expressions to generate.
+        Parameters:
+        columns : list of str
+            List of column names to generate expressions from.
+        max_expressions : int, optional
+            Maximum number of expressions to generate before stopping (default is 100,000).
+        """
         # List of binary operators
         self.binary_operators = ['+', '*', '-', '/']
 
@@ -29,14 +38,39 @@ class ExpressionGenerator:
         self.expression_count = 0
 
     def safe_power(self, base, exp):
-        """Return a safe power expression to avoid invalid values."""
+        """Return a safe power expression to avoid invalid values.
+        Parameters:
+        base : str
+            The base value to raise to a power.
+        exp : float
+            The exponent to raise the base to.
+            
+        Returns:
+        str:
+            A string representing a safe power operation.
+        Example:
+        --------
+        safe_power("x", 0.5) would return "np.power(x, 0.5) if x >= 0 else 0"
+        """
         if exp % 1 != 0:
             # For fractional exponents, ensure base is non-negative
             return f"np.power({base}, {exp}) if {base} >= 0 else 0"
         return f"np.power({base}, {exp})"
 
     def generate_unary_expressions(self, item):
-        """Generate unary expressions for a single item."""
+        """Generate unary expressions for a single item.
+        Parameters:
+        item : str
+            The item (column name) to generate unary expressions for.
+         -----------
+        Returns:
+        list of str:
+            A list of unary expressions generated from the item.
+        --------
+        Example:
+        --------
+        For item "x", this might return ["x", "np.exp(x)", "np.power(x, 2)", ...]
+        """
         unary_expressions = [item]
         for op in self.unary_operators:
             if self.expression_count >= self.max_expressions:
@@ -47,7 +81,18 @@ class ExpressionGenerator:
         return unary_expressions
 
     def generate_polynomial_expressions(self, item):
-        """Generate polynomial features by raising to different powers."""
+        """Generate polynomial features by raising the item to various powers.
+        Parameters:
+        item : str
+            The item (column name) to generate polynomial expressions for.
+
+        Returns:
+        list of str:
+            A list of polynomial expressions generated from the item.
+
+        Example:
+        For item "x", this might return ["np.power(x, 0.5)", "np.power(x, 1)", "np.power(x, 2)", ...]
+        """
         polynomial_expressions = []
         powers = [0.5, 1, 1.5, 2, 2.5, 3]
         for p in powers:
@@ -59,7 +104,19 @@ class ExpressionGenerator:
         return polynomial_expressions
 
     def generate_combinations(self, items):
-        """Generate combinations of unary and polynomial expressions."""
+    """Generate combinations of unary and polynomial expressions using binary operators.
+
+        Parameters:
+        items : list of str
+            A list of items (column names) to generate combinations for.
+
+        Returns:
+        list of str:
+            A list of combined expressions generated from the items.
+
+        Example:
+        For items ["x", "y"], this might return ["(np.exp(x)) + (np.power(y, 2))", "(x) * (y)", ...]
+        """
         combinations = []
         for item in items:
             unary_expressions = self.generate_unary_expressions(item)
@@ -79,7 +136,20 @@ class ExpressionGenerator:
         return combinations
 
     def generate_expressions(self, items):
-        """Generate all possible expressions using binary and unary operators."""
+        """Recursively generate all possible expressions using binary and unary operators.
+
+        Parameters:
+        items : list of str
+            A list of items (column names) to generate expressions for.
+
+        Returns:
+        list of str:
+            A list of generated expressions.
+
+        Example:
+        For items ["x", "y"], this might return ["(x) + (y)", "(np.exp(x)) * (np.log(y)) if (y) != 0 else 1", ...]
+        """
+        
         if self.expression_count >= self.max_expressions:
             return []
         if len(items) == 1:
@@ -105,7 +175,15 @@ class ExpressionGenerator:
         return expressions
 
     def generate_all_required_expressions(self):
-        """Generate all expressions that use all columns."""
+       """Generate all expressions that use all columns provided at initialization.
+        Returns:
+        list of str:
+            A list of all generated expressions that involve all provided columns.
+
+        Example:
+        For columns ["x", "y", "z"], this might return a long list of complex expressions
+        involving combinations of these columns.
+        """
         all_expressions = set()
         combinations = itertools.permutations(self.columns)
         for combination in combinations:
@@ -119,7 +197,20 @@ class ExpressionGenerator:
         return list(all_expressions)
 
     def dataframe_from_expr(self, df):
-        """Generates all the new columns with the expressions mentioned in the dataframe"""
+        """Generate a DataFrame containing all new columns based on generated expressions.
+        Parameters:
+        df : pd.DataFrame
+            The input DataFrame from which to generate new columns.
+
+        Returns:
+        pd.DataFrame:
+            A new DataFrame where each column represents the result of applying
+            a generated expression to the input DataFrame.
+
+        Example:
+        For a DataFrame with columns ["x", "y"], this might return a DataFrame with columns 
+        like ["(x) + (y)", "(np.exp(x)) * (np.power(y, 2))", ...].
+        """
         expressions = self.generate_all_required_expressions()
         evaluated_columns = {}
         # Evaluate expressions and store the results in the dictionary
