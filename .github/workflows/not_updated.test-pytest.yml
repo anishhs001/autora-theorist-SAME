@@ -1,12 +1,9 @@
-name: Test with py.test
+name: Run Tests
 
 on:
-  pull_request:
-  merge_group:
   push:
     branches:
       - main
-
 
 jobs:
   test:
@@ -15,13 +12,24 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         os: [ubuntu-latest, macos-latest, windows-latest]
+    
     runs-on: ${{ matrix.os }}
+
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         cache: "pip"
-    - run: pip install pytest
-    - run: pip install ".[test]"
-    - run: pytest --doctest-modules
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt  # Change this line if you use a different requirements file
+        pip install ".[test]"  # Install any testing dependencies, if applicable
+
+    - name: Run tests
+      run: |
+        pytest tests  # Run tests located in the 'tests' directory
