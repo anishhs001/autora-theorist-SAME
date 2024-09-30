@@ -27,7 +27,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt  # Change this line if you use a different requirements file
         pip install ".[test]"  # Install any testing dependencies, if applicable
 
     - name: Run tests
