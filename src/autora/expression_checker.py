@@ -4,32 +4,32 @@ import numpy as np
 
 
 class ExpressionChecker:
-    """
-    A class to evaluate and generate expressions from a DataFrame, 
-    and compute correlations between the generated features and a target variable.
+"""
+A class to evaluate and generate expressions from a DataFrame, 
+and compute correlations between the generated features and a target variable.
 
+Parameters:
+-----------
+df : pd.DataFrame
+The input DataFrame containing feature data.
+y : pd.Series or pd.DataFrame
+The target variable(s) for which correlations with generated features are calculated.
+"""
+    def __init__(self, df, y):
+    """
+    Initializes the ExpressionChecker by sampling 75 rows if the DataFrame has more than 75 rows.
+    
     Parameters:
     -----------
     df : pd.DataFrame
-        The input DataFrame containing feature data.
-    y : pd.Series or pd.DataFrame
-        The target variable(s) for which correlations with generated features are calculated.
-    """
-    def __init__(self, df, y):
-        """
-        Initializes the ExpressionChecker by sampling 75 rows if the DataFrame has more than 75 rows.
-
-        Parameters:
-        -----------
-        df : pd.DataFrame
-            The DataFrame to sample from and use in expression generation.
-        y : pd.Series
-            The target variable(s) associated with the DataFrame.
-         """
-      if len(df)>=75 and len(y)>=75:
+        The DataFrame to sample from and use in expression generation.
+    y : pd.Series
+        The target variable(s) associated with the DataFrame.
+     """
+    if len(df)>=75 and len(y)>=75:
         self.df = df.sample(n = 75, random_state = 42)
         self.y = y.sample(n = 75, random_state = 42)
-      else:
+    else:
         self.df = df
         self.y = y
     def output(self):
