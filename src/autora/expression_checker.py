@@ -25,7 +25,7 @@ The target variable(s) for which correlations with generated features are calcul
         The DataFrame to sample from and use in expression generation.
     y : pd.Series
         The target variable(s) associated with the DataFrame.
-     """
+    """
     if len(df)>=75 and len(y)>=75:
         self.df = df.sample(n = 75, random_state = 42)
         self.y = y.sample(n = 75, random_state = 42)
