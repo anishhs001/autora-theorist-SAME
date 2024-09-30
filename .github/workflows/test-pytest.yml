@@ -27,7 +27,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        pip install pytest  # Explicitly install pytest
         pip install ".[test]"  # Install any testing dependencies, if applicable
+        
 
     - name: Run tests
       run: |
